@@ -122,7 +122,7 @@ public:
    * Possible exceptions tf2::LookupException, tf2::ConnectivityException,
    * tf2::ExtrapolationException, tf2::InvalidArgumentException
    */
-  geometry_msgs::TransformStamped 
+  geometry_msgs::TransformStamped
     lookupTransform(const std::string& target_frame, const std::string& source_frame,
 		    const ros::Time& time) const;
 
@@ -131,7 +131,7 @@ public:
    * \param target_time The time to which the data should be transformed. (0 will get the latest)
    * \param source_frame The frame where the data originated
    * \param source_time The time at which the source_frame should be evaluated. (0 will get the latest)
-   * \param fixed_frame The frame in which to assume the transform is constant in time. 
+   * \param fixed_frame The frame in which to assume the transform is constant in time.
    * \return The transform between the frames
    *
    * Possible exceptions tf2::LookupException, tf2::ConnectivityException,
@@ -142,7 +142,7 @@ public:
     lookupTransform(const std::string& target_frame, const ros::Time& target_time,
 		    const std::string& source_frame, const ros::Time& source_time,
 		    const std::string& fixed_frame) const;
-  
+
   /** \brief Lookup the twist of the tracking_frame with respect to the observation frame in the reference_frame using the reference point
    * \param tracking_frame The frame to track
    * \param observation_frame The frame from which to measure the twist
@@ -152,38 +152,38 @@ public:
    * \param time The time at which to get the velocity
    * \param duration The period over which to average
    * \return twist The twist output
-   * 
-   * This will compute the average velocity on the interval 
+   *
+   * This will compute the average velocity on the interval
    * (time - duration/2, time+duration/2). If that is too close to the most
    * recent reading, in which case it will shift the interval up to
    * duration/2 to prevent extrapolation.
    *
    * Possible exceptions tf2::LookupException, tf2::ConnectivityException,
    * tf2::ExtrapolationException, tf2::InvalidArgumentException
-   * 
+   *
    * New in geometry 1.1
    */
   /*
   geometry_msgs::Twist
     lookupTwist(const std::string& tracking_frame, const std::string& observation_frame, const std::string& reference_frame,
-		const tf::Point & reference_point, const std::string& reference_point_frame, 
+		const tf::Point & reference_point, const std::string& reference_point_frame,
 		const ros::Time& time, const ros::Duration& averaging_interval) const;
   */
-  /** \brief lookup the twist of the tracking frame with respect to the observational frame 
-   * 
+  /** \brief lookup the twist of the tracking frame with respect to the observational frame
+   *
    * This is a simplified version of
    * lookupTwist with it assumed that the reference point is the
    * origin of the tracking frame, and the reference frame is the
-   * observation frame.  
+   * observation frame.
    *
    * Possible exceptions tf2::LookupException, tf2::ConnectivityException,
    * tf2::ExtrapolationException, tf2::InvalidArgumentException
-   * 
+   *
    * New in geometry 1.1
    */
   /*
   geometry_msgs::Twist
-    lookupTwist(const std::string& tracking_frame, const std::string& observation_frame, 
+    lookupTwist(const std::string& tracking_frame, const std::string& observation_frame,
 		const ros::Time& time, const ros::Duration& averaging_interval) const;
   */
   /** \brief Test if a transform is possible
@@ -191,11 +191,11 @@ public:
    * \param source_frame The frame from which to transform
    * \param time The time at which to transform
    * \param error_msg A pointer to a string which will be filled with why the transform failed, if not NULL
-   * \return True if the transform is possible, false otherwise 
+   * \return True if the transform is possible, false otherwise
    */
   bool canTransform(const std::string& target_frame, const std::string& source_frame,
                     const ros::Time& time, std::string* error_msg = NULL) const;
-  
+
   /** \brief Test if a transform is possible
    * \param target_frame The frame into which to transform
    * \param target_time The time into which to transform
@@ -203,7 +203,7 @@ public:
    * \param source_time The time from which to transform
    * \param fixed_frame The frame in which to treat the transform as constant in time
    * \param error_msg A pointer to a string which will be filled with why the transform failed, if not NULL
-   * \return True if the transform is possible, false otherwise 
+   * \return True if the transform is possible, false otherwise
    */
   bool canTransform(const std::string& target_frame, const ros::Time& target_time,
                     const std::string& source_frame, const ros::Time& source_time,
@@ -222,7 +222,7 @@ public:
    * Useful for debugging
    */
   std::string allFramesAsString() const;
-  
+
   typedef boost::function<void(TransformableRequestHandle request_handle, const std::string& target_frame, const std::string& source_frame,
                                ros::Time time, TransformableResult result)> TransformableCallback;
 
@@ -238,12 +238,12 @@ public:
 
 
 
-  // Tell the buffer that there are multiple threads serviciing it. 
-  // This is useful for derived classes to know if they can block or not. 
+  // Tell the buffer that there are multiple threads serviciing it.
+  // This is useful for derived classes to know if they can block or not.
   void setUsingDedicatedThread(bool value) { using_dedicated_thread_ = value;};
   // Get the state of using_dedicated_thread_
   bool isUsingDedicatedThread() const { return using_dedicated_thread_;};
-  
+
 
 
 
@@ -275,11 +275,11 @@ public:
   void _getFrameStrings(std::vector<std::string>& ids) const;
 
 
-  CompactFrameID _lookupFrameNumber(const std::string& frameid_str) const { 
-    return lookupFrameNumber(frameid_str); 
+  CompactFrameID _lookupFrameNumber(const std::string& frameid_str) const {
+    return lookupFrameNumber(frameid_str);
   }
   CompactFrameID _lookupOrInsertFrameNumber(const std::string& frameid_str) {
-    return lookupOrInsertFrameNumber(frameid_str); 
+    return lookupOrInsertFrameNumber(frameid_str);
   }
 
   int _getLatestCommonTime(CompactFrameID target_frame, CompactFrameID source_frame, ros::Time& time, std::string* error_string) const {
@@ -308,18 +308,18 @@ public:
 private:
 
   /** \brief A way to see what frames have been cached
-   * Useful for debugging. Use this call internally. 
+   * Useful for debugging. Use this call internally.
    */
-  std::string allFramesAsStringNoLock() const;  
+  std::string allFramesAsStringNoLock() const;
 
 
   /******************** Internal Storage ****************/
-  
+
   /** \brief The pointers to potential frames that the tree can be made of.
    * The frames will be dynamically allocated at run time when set the first time. */
   typedef std::vector<TimeCacheInterfacePtr> V_TimeCacheInterface;
   V_TimeCacheInterface frames_;
-  
+
   /** \brief A mutex to protect testing and allocating new frames on the above vector. */
   mutable boost::mutex frame_mutex_;
 
@@ -413,6 +413,13 @@ private:
   //Whether it is safe to use canTransform with a timeout. (If another thread is not provided it will always timeout.)
   bool using_dedicated_thread_;
 
+public:
+  int _walkToTopParent(ros::Time time, CompactFrameID target_id, CompactFrameID source_id, std::string* error_string, std::vector<CompactFrameID> *frame_chain) const;
+
+  const std::string& _lookupFrameString(CompactFrameID frame_id_num) const
+  {
+    return lookupFrameString(frame_id_num);
+  }
 };
 
 
