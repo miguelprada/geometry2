@@ -144,6 +144,74 @@ TEST(tf2_chainAsVector, chain_v_configuration)
   if( chain.size() >= 5 ) EXPECT_EQ( chain[4], "c" );
 }
 
+TEST(tf2_walkToTopParent, chain_i_configuration)
+{
+  tf2::BufferCore mBC;
+
+  geometry_msgs::TransformStamped st;
+  st.header.stamp = ros::Time(0);
+  st.transform.rotation.w = 1;
+
+  st.header.frame_id = "a";
+  st.child_frame_id = "b";
+  mBC.setTransform(st, "authority1");
+
+  st.header.frame_id = "b";
+  st.child_frame_id = "c";
+  mBC.setTransform(st, "authority1");
+
+  st.header.frame_id = "c";
+  st.child_frame_id = "d";
+  mBC.setTransform(st, "authority1");
+
+  st.header.frame_id = "d";
+  st.child_frame_id = "e";
+  mBC.setTransform(st, "authority1");
+
+  std::vector<tf2::CompactFrameID> id_chain;
+  mBC._walkToTopParent( ros::Time(), mBC._lookupFrameNumber("e"), mBC._lookupFrameNumber("a"), 0, &id_chain);
+
+  EXPECT_EQ( id_chain.size(), 5 );
+  if( id_chain.size() >= 1 ) EXPECT_EQ( mBC._lookupFrameString(id_chain[0]), "a" );
+  if( id_chain.size() >= 2 ) EXPECT_EQ( mBC._lookupFrameString(id_chain[1]), "b" );
+  if( id_chain.size() >= 3 ) EXPECT_EQ( mBC._lookupFrameString(id_chain[2]), "c" );
+  if( id_chain.size() >= 4 ) EXPECT_EQ( mBC._lookupFrameString(id_chain[3]), "d" );
+  if( id_chain.size() >= 5 ) EXPECT_EQ( mBC._lookupFrameString(id_chain[4]), "e" );
+}
+
+TEST(tf2_walkToTopParent, chain_v_configuration)
+{
+  tf2::BufferCore mBC;
+
+  geometry_msgs::TransformStamped st;
+  st.header.stamp = ros::Time(0);
+  st.transform.rotation.w = 1;
+
+  st.header.frame_id = "a";
+  st.child_frame_id = "b";
+  mBC.setTransform(st, "authority1");
+
+  st.header.frame_id = "b";
+  st.child_frame_id = "c";
+  mBC.setTransform(st, "authority1");
+
+  st.header.frame_id = "a";
+  st.child_frame_id = "d";
+  mBC.setTransform(st, "authority1");
+
+  st.header.frame_id = "d";
+  st.child_frame_id = "e";
+  mBC.setTransform(st, "authority1");
+
+  std::vector<tf2::CompactFrameID> id_chain;
+  mBC._walkToTopParent( ros::Time(), mBC._lookupFrameNumber("e"), mBC._lookupFrameNumber("c"), 0, &id_chain);
+
+  EXPECT_EQ( id_chain.size(), 3 );
+  if( id_chain.size() >= 1 ) EXPECT_EQ( mBC._lookupFrameString(id_chain[0]), "a" );
+  if( id_chain.size() >= 2 ) EXPECT_EQ( mBC._lookupFrameString(id_chain[1]), "d" );
+  if( id_chain.size() >= 3 ) EXPECT_EQ( mBC._lookupFrameString(id_chain[2]), "e" );
+}
+
 
 int main(int argc, char **argv){
   testing::InitGoogleTest(&argc, argv);
