@@ -109,6 +109,41 @@ TEST(tf2_canTransform, One_Exists)
   EXPECT_FALSE(tfc.canTransform("foo", "bar", ros::Time().fromSec(1.0)));
 }
 
+TEST(tf2_chainAsVector, chain_v_configuration)
+{
+  tf2::BufferCore mBC;
+
+  geometry_msgs::TransformStamped st;
+  st.header.stamp = ros::Time(0);
+  st.transform.rotation.w = 1;
+
+  st.header.frame_id = "a";
+  st.child_frame_id = "b";
+  mBC.setTransform(st, "authority1");
+
+  st.header.frame_id = "b";
+  st.child_frame_id = "c";
+  mBC.setTransform(st, "authority1");
+
+  st.header.frame_id = "a";
+  st.child_frame_id = "d";
+  mBC.setTransform(st, "authority1");
+
+  st.header.frame_id = "d";
+  st.child_frame_id = "e";
+  mBC.setTransform(st, "authority1");
+
+  std::vector<std::string> chain;
+  mBC._chainAsVector( "c", ros::Time(), "e", ros::Time(), "c", chain);
+
+  EXPECT_EQ( chain.size(), 5 );
+  if( chain.size() >= 1 ) EXPECT_EQ( chain[0], "e" );
+  if( chain.size() >= 2 ) EXPECT_EQ( chain[1], "d" );
+  if( chain.size() >= 3 ) EXPECT_EQ( chain[2], "a" );
+  if( chain.size() >= 4 ) EXPECT_EQ( chain[3], "b" );
+  if( chain.size() >= 5 ) EXPECT_EQ( chain[4], "c" );
+}
+
 
 int main(int argc, char **argv){
   testing::InitGoogleTest(&argc, argv);
